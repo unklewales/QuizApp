@@ -4,7 +4,7 @@ using QuizApp.Models;
 
 namespace QuizApp.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -20,7 +20,7 @@ namespace QuizApp.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //base.OnModelCreating(modelBuilder);
+            
 
             base.OnModelCreating(modelBuilder);
 
