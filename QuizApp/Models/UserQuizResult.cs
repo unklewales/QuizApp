@@ -5,7 +5,7 @@ namespace QuizApp.Models
     public class UserQuizResult
     {
         public int Id { get; set; }
-        public long ApplicationUserId { get; set; }
+        public int ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]
         public ApplicationUser? ApplicationUser { get; set; }    
 

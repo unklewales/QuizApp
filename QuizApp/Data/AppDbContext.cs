@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using QuizApp.Models;
 
 namespace QuizApp.Data
@@ -16,5 +17,23 @@ namespace QuizApp.Data
         public DbSet<UserQuizResult> UserQuizResults { get; set; }
         public DbSet<Quiz> Quizes { get; set; }
         public DbSet<Question> Questions { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //base.OnModelCreating(modelBuilder);
+
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Question>()
+                .HasMany(q => q.Answers)         // A Question can have many Answers
+                .WithOne(a => a.Question)        // An Answer belongs to one Question
+                .HasForeignKey(a => a.QuestionId); // Foreign key relationship
+
+            modelBuilder.Entity<Question>()
+                .HasOne(q => q.CorrectAnswer)    // A Question has one CorrectAnswer
+                .WithOne()                       // A CorrectAnswer is not pointing back to Question
+                .HasForeignKey<Question>(q => q.CorrectAnswerId);
+
+        }
     }
 }
