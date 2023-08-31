@@ -1,10 +1,15 @@
-﻿namespace QuizApp.Models
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace QuizApp.Models
 {
     public class Department
     {
-        public int Id { get; set; }    
-        public string? Support { get; set; } 
-        public string? Development { get; set; }    
-        public string? DataAnalysis { get; set; }
+        [Key]
+        public int DepartmentId { get; set; }
+        [DisplayName("Name  of Department")]
+        public string? DepartmentalName { get; set; } 
+           
+        
     }
 }

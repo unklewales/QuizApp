@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizApp.Data;
 
@@ -10,9 +11,11 @@ using QuizApp.Data;
 namespace QuizApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230830133441_removeAnswermodel")]
+    partial class removeAnswermodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.10");
@@ -78,10 +81,6 @@ namespace QuizApp.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -132,10 +131,6 @@ namespace QuizApp.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -217,16 +212,33 @@ namespace QuizApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("QuizApp.Models.Department", b =>
+            modelBuilder.Entity("QuizApp.Models.ApplicationUser", b =>
                 {
                     b.Property<int>("DepartmentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("DepartmentId");
+
+                    b.ToTable("ApplicationUsers");
+                });
+
+            modelBuilder.Entity("QuizApp.Models.Department", b =>
+                {
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("DepartmentalName")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("DepartmentId");
+                    b.HasKey("Id");
 
                     b.ToTable("Departments");
                 });
@@ -241,6 +253,18 @@ namespace QuizApp.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("OptionA")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OptionB")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OptionC")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OptionD")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -260,7 +284,7 @@ namespace QuizApp.Migrations
 
             modelBuilder.Entity("QuizApp.Models.Quiz", b =>
                 {
-                    b.Property<int>("QuizId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -271,7 +295,7 @@ namespace QuizApp.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("QuizId");
+                    b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
 
@@ -284,9 +308,8 @@ namespace QuizApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ApplicationUserId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CompletionDate")
                         .HasColumnType("TEXT");
@@ -304,25 +327,6 @@ namespace QuizApp.Migrations
                     b.HasIndex("QuizId");
 
                     b.ToTable("UserQuizResults");
-                });
-
-            modelBuilder.Entity("QuizApp.Models.ApplicationUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -376,6 +380,17 @@ namespace QuizApp.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("QuizApp.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("QuizApp.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
             modelBuilder.Entity("QuizApp.Models.Question", b =>
                 {
                     b.HasOne("QuizApp.Models.Quiz", "Quiz")
@@ -415,17 +430,6 @@ namespace QuizApp.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Quiz");
-                });
-
-            modelBuilder.Entity("QuizApp.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("QuizApp.Models.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("QuizApp.Models.Quiz", b =>

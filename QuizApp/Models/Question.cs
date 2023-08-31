@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuizApp.Models
@@ -8,16 +9,14 @@ namespace QuizApp.Models
         [Key]
         public int QuestionId { get; set; }
         public string Text { get; set; }
-        public int CorrectAnswerId { get; set; }
-        [ForeignKey("CorrectAnswerId")]
-        public Answer CorrectAnswer { get; set; }
+        public string OptionA { get; set; }
+        
+        public bool IsCorrect { get; set; }
 
-        public ICollection<Answer> Answers { get; set; }
-
+        [ForeignKey("QuizId")]
         public int QuizId { get; set; }
-        public Quiz Quiz { get; set; }
-
-       
+        
+        public Quiz? Quiz { get; set; }
 
     }
 }

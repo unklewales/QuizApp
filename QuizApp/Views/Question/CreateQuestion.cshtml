@@ -1,0 +1,31 @@
+﻿@model QuestionView
+
+<div class="container">
+    <h2>Create Question</h2>
+    <form method="post" >
+        @*<input type="hidden" asp-for="Question.QuizId" value="@Model.Question.QuizId" />*@
+
+
+        <div class="form-group">
+            <label for="Question.Text">Question Text:</label>
+            <textarea class="form-control" asp-for="Question.Text"></textarea>
+        </div>
+
+        @for (int i = 0; i < 4; i++)
+        {
+            <div class="mb-3 row p-1">
+                <label asp-for="Question.OptionA" class="p-0"></label>
+                <input asp-for="Question.OptionA" class="form-control" />
+                <span asp-validation-for="Question.OptionA" class="text-danger"></span>
+            </div>
+            <div class="mb-3 row p-1">
+                <label>
+                    <input asp-for="Question.IsCorrect" value="true" />
+                    Correct Answer
+                </label>
+            </div>
+        }
+        <button  type="submit" class="btn btn-primary mt-5">Create Question</button>
+    </form>
+</div>
+

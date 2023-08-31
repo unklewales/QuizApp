@@ -10,14 +10,18 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using QuizApp.Data;
+using QuizApp.Models;
 
 namespace QuizApp.Areas.Identity.Pages.Account
 {
@@ -29,13 +33,15 @@ namespace QuizApp.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender, AppDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +49,8 @@ namespace QuizApp.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context= context;
+             _webHostEnvironment = webHostEnvironment;  
         }
 
         /// <summary>
@@ -97,11 +105,31 @@ namespace QuizApp.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            public int SelectedDepartmentId { get; set; }
+            
+            public IEnumerable<SelectListItem> DepartmentList { get; set; }
+            [Required]
+            public string Name { get; set; }
+            //public IFormFile ImageUrl{ get; set; }
+            public IFormFile ProfileImage { get; set; }
+
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            var departments = _context.Departments.ToList();
+
+            // Create a SelectList for the dropdown
+           
+            var departmentList = new SelectList(departments, "DepartmentId", "DepartmentalName");
+
+            Input = new InputModel
+            {
+                DepartmentList = departmentList
+            };
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -116,6 +144,26 @@ namespace QuizApp.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                user.Name = Input.Name;
+                user.DepartmentId = Input.SelectedDepartmentId;
+                //user.ImageUrl = Input.ImageUrl;
+
+                if (Input.ProfileImage != null)
+                {
+                    // Save the image to a specific directory
+                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, @"Images\ProfileImages");
+                    var imageName = Guid.NewGuid().ToString() + Path.GetExtension(Input.ProfileImage.FileName);
+                    var imagePathWithFileName = Path.Combine(imagePath, imageName);
+
+                    using (var stream = new FileStream(imagePathWithFileName, FileMode.Create))
+                    {
+                        await Input.ProfileImage.CopyToAsync(stream);
+                    }
+
+                    user.ImageUrl = @"\Images\ProfileImages" + imageName; // Save the URL to the image
+                }
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -154,11 +202,11 @@ namespace QuizApp.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private IdentityUser CreateUser()
+        private ApplicationUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<IdentityUser>();
+                return Activator.CreateInstance<ApplicationUser>();
             }
             catch
             {
