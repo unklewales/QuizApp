@@ -4,7 +4,7 @@
     {
         
             IDepartmentRepository Department { get; }
-            IQuizRepository Quiz { get; }
+            
             IQuestionRepository Question { get; }
 
          

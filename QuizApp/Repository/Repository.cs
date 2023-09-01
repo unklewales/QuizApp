@@ -14,7 +14,7 @@ namespace QuizApp.Repository
         {
             db = DbContext;
             this.dbSet = db.Set<T>();
-            db.Quizes.Include(u => u.Department);
+            db.Questions.Include(u => u.Department);
 
         }
         public void AddAObj(T obj)

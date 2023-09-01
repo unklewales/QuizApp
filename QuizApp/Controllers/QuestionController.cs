@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizApp.Models;
 using QuizApp.Repository.IRepository;
 using QuizApp.ViewModels;
@@ -18,32 +19,35 @@ namespace QuizApp.Controllers
             return View();
         }
 
-        public IActionResult CreateQuestion(int quizId) 
+        public IActionResult CreateQuestion() 
         {
+            var departmentsList = _unitOfWork.Department.GetAll().Select(u => new SelectListItem
+            {
+                Text = u.DepartmentalName,
+                Value = u.DepartmentId.ToString()
+            });
             QuestionView vm = new()
             {
-                Question = new Question
-                {
-                    Quiz = new Quiz
-                    {
-                        QuizId = quizId
-                    }
-                }
+
+                DepartmentList = departmentsList,
+                Question = new Question()
                 
+                   
             };
 
             
 
             return View(vm);  
         }
-
+       
         [HttpPost]
         public IActionResult CreateQuestion(QuestionView obj)
         {
 
-
+            
             if (ModelState.IsValid)
             {
+                
                 
                 _unitOfWork.Question.AddAObj(obj.Question);
                 

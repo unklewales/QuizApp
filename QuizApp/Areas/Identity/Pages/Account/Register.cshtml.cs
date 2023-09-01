@@ -168,7 +168,53 @@ namespace QuizApp.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    // Determine the department-specific view based on the selected department
+                    string departmentView = "";
+
+                    if(Input.SelectedDepartmentId == int.MaxValue) 
+                    {
+                      if (Input.SelectedDepartmentId==1) 
+                        {
+                            departmentView = "DataAnalysis";
+                           
+                        }else if(Input.SelectedDepartmentId == 2)
+                        {
+                            departmentView = "Development";
+                        }
+
+                        else
+                        {
+                            departmentView = "Support";
+                        }
+
+
+                       RedirectToPage(departmentView);
+                    }
+                    
+                    
+
+                    //switch (/*Input.SelectedDepartmentId*/)
+                    //{
+                    //    case 1: // HR department
+                    //        departmentView = "HR";
+                    //        break;
+                    //    case 2: // IT department
+                    //        departmentView = "IT";
+                    //        break;
+                    //    case 3: // Marketing department
+                    //        departmentView = "Marketing";
+                    //        break;
+                    //    // Add more cases as needed
+                    //    default:
+                    //        // Default view if no specific department is matched
+                    //        departmentView = "Default"; // You can customize this
+                    //        break;
+                    //}
+
+                    //// Redirect the user to the appropriate department view
+                    //return RedirectToPage(departmentView);
                     _logger.LogInformation("User created a new account with password.");
+
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -191,6 +237,8 @@ namespace QuizApp.Areas.Identity.Pages.Account
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
+
+                    
                 }
                 foreach (var error in result.Errors)
                 {

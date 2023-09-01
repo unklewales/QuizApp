@@ -3,7 +3,7 @@
 <div class="container">
     <h2>Create Question</h2>
     <form method="post" >
-        @*<input type="hidden" asp-for="Question.QuizId" value="@Model.Question.QuizId" />*@
+        @*<input type="hidden" asp-for="Question.DepartmentId" />*@
 
 
         <div class="form-group">
@@ -11,21 +11,60 @@
             <textarea class="form-control" asp-for="Question.Text"></textarea>
         </div>
 
-        @for (int i = 0; i < 4; i++)
-        {
-            <div class="mb-3 row p-1">
-                <label asp-for="Question.OptionA" class="p-0"></label>
-                <input asp-for="Question.OptionA" class="form-control" />
-                <span asp-validation-for="Question.OptionA" class="text-danger"></span>
-            </div>
-            <div class="mb-3 row p-1">
-                <label>
-                    <input asp-for="Question.IsCorrect" value="true" />
-                    Correct Answer
-                </label>
-            </div>
-        }
+        <div class="mb-3 row p-1">
+            <label asp-for="Question.OptionA" class="p-0"></label>
+            <input type="radio" asp-for="Question.IsCorrectA" value="OptionA" name="correctOption" />
+            <input asp-for="Question.OptionA" class="form-control" />
+            <span asp-validation-for="Question.OptionA" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 row p-1">
+            <label asp-for="Question.OptionB" class="p-0"></label>
+            <input type="radio" asp-for="Question.IsCorrectB" value="OptionB" name="correctOption" />
+            <input asp-for="Question.OptionB" class="form-control" />
+            <span asp-validation-for="Question.OptionB" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 row p-1">
+            <label asp-for="Question.OptionC" class="p-0"></label>
+            <input type="radio" asp-for="Question.IsCorrectC" value="OptionC" name="correctOption" />
+            <input asp-for="Question.OptionC" class="form-control" />
+            <span asp-validation-for="Question.OptionC" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 row p-1">
+            <label asp-for="Question.OptionD" class="p-0"></label>
+            <input type="radio" asp-for="Question.IsCorrectD" value="OptionD" name="correctOption" />
+            <input asp-for="Question.OptionD" class="form-control" />
+            <span asp-validation-for="Question.OptionD" class="text-danger"></span>
+        </div>
+
+        
+
+        <div class=" mb-3 row p-1">
+            <select asp-for="@Model.Question.DepartmentId" asp-items="@Model.DepartmentList" class=" form-select p-0">
+                <option disabled selected>-Selected Department-</option>
+        </select>
+
+            <span asp-validation-for="@Model.Question.DepartmentId" class="text-danger"></span>
+        </div>
         <button  type="submit" class="btn btn-primary mt-5">Create Question</button>
     </form>
 </div>
+
+<script>
+    const options = document.querySelectorAll('input[type="radio"][name="correctOption"]');
+    options.forEach(option => {
+        option.addEventListener('change', () => {
+            if (option.checked) {
+                options.forEach(otherOption => {
+                    if (otherOption !== option) {
+                        otherOption.disabled = true;
+                        otherOption.previousElementSibling.removeAttribute("asp-for");
+                    }
+                });
+            }
+        });
+    });
+</script>
 

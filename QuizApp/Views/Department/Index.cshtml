@@ -1,4 +1,4 @@
-﻿@model List<Department>//to do any c# in view you need to add @.this line is importing the collection define in the controller
+﻿@model List<Department>
  <div class="container">
     <div class="row pt-4 pb-4">
          <div class=" col-6">
@@ -11,6 +11,9 @@
                 Create
             </a>
             
+            <a asp-controller="Question" asp-action="CreateQuestion" class="btn btn-primary mx-4">
+                Create Questions
+            </a>
         </div>
      </div>
     
@@ -32,18 +35,12 @@
         {
             <tr>
             <td>@obj.DepartmentalName</td>
-            
-            <td class=" btn-grp" role="group">
-                        <a asp-controller="Department" asp-action="Edit" asp-route-id="@obj.DepartmentId" class="btn btn-primary mx-4">
-                    Edit
-                </a>
-            </td>
 
-                    <td class=" btn-grp" role="group">
-                        <a asp-controller="Department" asp-action="Delete" asp-route-id="@obj.DepartmentId" class="btn btn-danger mx-4">
-                                Delete
+                    @*<td class=" btn-grp" role="group">
+                        <a asp-controller="Question" asp-action="CreateQuestion" asp-route-id="@obj.DepartmentId" class="btn btn-primary mx-4">
+                            Create Questions
                         </a>
-                    </td>
+                </td>*@
             </tr> 
         }
         </tbody>

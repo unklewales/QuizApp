@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizApp.Data;
 
@@ -10,9 +11,11 @@ using QuizApp.Data;
 namespace QuizApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230831113335_twekedsomemodels")]
+    partial class twekedsomemodels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.10");
@@ -240,16 +243,7 @@ namespace QuizApp.Migrations
                     b.Property<int>("DepartmentId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsCorrectA")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsCorrectB")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsCorrectC")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsCorrectD")
+                    b.Property<bool>("IsCorrect")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("OptionA")

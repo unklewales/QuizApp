@@ -9,9 +9,9 @@ namespace QuizApp.Models
         [ForeignKey("ApplicationUserId")]
         public ApplicationUser? ApplicationUser { get; set; }    
 
-        public int QuizId { get; set; }
-        [ForeignKey("QuizId")]  
-        public Quiz? Quiz { get; set; }
+        //public int QuizId { get; set; }
+        //[ForeignKey("QuizId")]  
+        //public Quiz? Quiz { get; set; }
         public int Score { get; set; }
         public DateTime CompletionDate { get; set; }
     }

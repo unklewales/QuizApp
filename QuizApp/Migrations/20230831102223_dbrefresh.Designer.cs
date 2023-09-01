@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizApp.Data;
 
@@ -10,9 +11,11 @@ using QuizApp.Data;
 namespace QuizApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230831102223_dbrefresh")]
+    partial class dbrefresh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.10");
@@ -237,36 +240,15 @@ namespace QuizApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsCorrectA")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsCorrectB")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsCorrectC")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsCorrectD")
+                    b.Property<bool>("IsCorrect")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("OptionA")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("OptionB")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OptionC")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OptionD")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("QuizId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -274,9 +256,29 @@ namespace QuizApp.Migrations
 
                     b.HasKey("QuestionId");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex("QuizId");
 
                     b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("QuizApp.Models.Quiz", b =>
+                {
+                    b.Property<int>("QuizId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("QuizId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Quizes");
                 });
 
             modelBuilder.Entity("QuizApp.Models.UserQuizResult", b =>
@@ -292,12 +294,17 @@ namespace QuizApp.Migrations
                     b.Property<DateTime>("CompletionDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("QuizId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Score")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("QuizId");
 
                     b.ToTable("UserQuizResults");
                 });
@@ -375,8 +382,19 @@ namespace QuizApp.Migrations
 
             modelBuilder.Entity("QuizApp.Models.Question", b =>
                 {
-                    b.HasOne("QuizApp.Models.Department", "Department")
+                    b.HasOne("QuizApp.Models.Quiz", "Quiz")
                         .WithMany("Questions")
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Quiz");
+                });
+
+            modelBuilder.Entity("QuizApp.Models.Quiz", b =>
+                {
+                    b.HasOne("QuizApp.Models.Department", "Department")
+                        .WithMany()
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -392,7 +410,15 @@ namespace QuizApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("QuizApp.Models.Quiz", "Quiz")
+                        .WithMany()
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("Quiz");
                 });
 
             modelBuilder.Entity("QuizApp.Models.ApplicationUser", b =>
@@ -406,7 +432,7 @@ namespace QuizApp.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("QuizApp.Models.Department", b =>
+            modelBuilder.Entity("QuizApp.Models.Quiz", b =>
                 {
                     b.Navigation("Questions");
                 });
